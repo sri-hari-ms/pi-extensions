@@ -18,6 +18,7 @@ const MAX_TURNS = 8;
 const MAX_RUN_MS = 8 * 60 * 1000;
 const DEFAULT_BASH_TIMEOUT_SECONDS = 30;
 const DEFAULT_THINKING_LEVEL = "high";
+const PRIMARY_CODE_REVIEWER_MODEL = "ollama/deepseek-v4-flash:0731-cloud";
 const THINKING_LEVELS = ["off", "minimal", "low", "medium", "high", "xhigh", "max"] as const;
 
 type ThinkingLevel = (typeof THINKING_LEVELS)[number];
@@ -384,6 +385,7 @@ async function selectCodeReviewerModel(
 		};
 	}
 
+	const primaryModel = available.find((model) => modelKey(model) === PRIMARY_CODE_REVIEWER_MODEL);
 	const currentModel = ctx.model;
 	const currentProvider = currentModel?.provider;
 	const sameProvider = currentProvider ? available.filter((model) => model.provider === currentProvider) : [];
@@ -410,6 +412,7 @@ async function selectCodeReviewerModel(
 
 	const ordered: PiModel[] = [];
 	const seen = new Set<string>();
+	if (primaryModel) appendOrderedCandidates(ordered, seen, [primaryModel]);
 	appendOrderedCandidates(ordered, seen, oppositeProviderFamilyReasoning);
 	appendOrderedCandidates(ordered, seen, oppositeProviderFamily);
 	appendOrderedCandidates(ordered, seen, oppositeProviderReasoning);

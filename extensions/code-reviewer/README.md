@@ -43,7 +43,7 @@ The tool accepts:
 When called, it launches an isolated in-memory child agent with:
 
 - no inherited extensions, skills, prompt templates, themes, context files, or agents files;
-- an auto-selected review model that prefers contrarian-style opposite-provider and opposite-family candidates before same-provider fallbacks;
+- `ollama/deepseek-v4-flash:0731-cloud` as the primary review model when it is available, followed by contrarian-style opposite-provider and opposite-family candidates and then same-provider fallbacks;
 - automatic model candidates constrained to the current Pi session's model scope when that scope is non-empty;
 - requested thinking taken from the active session when available, otherwise defaulting to `high` for reasoning models and `off` for non-reasoning models, then clamped to the selected model's supported level;
 - read-only tools only: `read`, `grep`, `find`, `ls`, and guarded `bash`;

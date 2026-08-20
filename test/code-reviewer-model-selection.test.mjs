@@ -139,6 +139,26 @@ export function __setCreateAgentSessionBehaviors(nextBehaviors) {
   };
 }
 
+test('code_reviewer prefers the configured Ollama review model when available', async () => {
+  const { selectCodeReviewerModel } = await loadCodeReviewerTestUtils();
+  const result = await selectCodeReviewerModel(
+    createModelSelectionContext({
+      model: { provider: 'openai', id: 'gpt-5.5', reasoning: true },
+      available: [
+        { provider: 'anthropic', id: 'claude-opus-4.8', reasoning: true },
+        { provider: 'ollama', id: 'deepseek-v4-flash:0731-cloud', reasoning: true },
+        { provider: 'openai', id: 'gpt-5.5-pro', reasoning: true },
+      ],
+    }),
+  );
+
+  assert.equal(result.ok, true);
+  if (!result.ok) return;
+
+  assert.equal(`${result.selection.provider}/${result.selection.id}`, 'ollama/deepseek-v4-flash:0731-cloud');
+  assert.equal(`${result.ordered[0].provider}/${result.ordered[0].id}`, 'ollama/deepseek-v4-flash:0731-cloud');
+});
+
 test('code_reviewer auto-selection prefers an opposite provider and model family when available', async () => {
   const { selectCodeReviewerModel } = await loadCodeReviewerTestUtils();
   const result = await selectCodeReviewerModel(
